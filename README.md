@@ -1,151 +1,212 @@
 # Predicción de Inventario con Machine Learning
 
-## Descripción del Proyecto
+## Descripción General
 
 Este proyecto fue desarrollado como parte de la asignatura **Inteligencia Artificial y Machine Learning** de la Maestría en Sistemas Computacionales.
 
-La finalidad del proyecto es implementar un modelo de **Machine Learning** capaz de predecir los niveles finales de inventario mediante técnicas de aprendizaje supervisado, utilizando información histórica relacionada con movimientos de almacén.
+El objetivo principal consiste en implementar un modelo de Machine Learning capaz de predecir los niveles finales de inventario utilizando datos históricos de movimientos de almacén, permitiendo apoyar la toma de decisiones relacionadas con compras, abastecimiento y control de existencias.
 
-La solución fue desarrollada utilizando **Node.js** y un modelo de **Regresión Lineal Múltiple**, permitiendo estimar la existencia final de productos a partir de variables operativas relevantes.
+La solución fue desarrollada utilizando **Node.js** y un modelo de **Regresión Lineal Múltiple**, complementado con la generación automática de gráficas para analizar visualmente el comportamiento de los datos y validar el desempeño del modelo.
 
 ---
 
-## Problema Planteado
+# Problema Planteado
 
-La empresa Maquiladora San José requiere mejorar el control y la planeación de inventarios para evitar:
+La empresa Maquiladora San José requiere mejorar la gestión de sus inventarios para minimizar problemas asociados con:
 
 - Exceso de existencias.
+- Costos elevados de almacenamiento.
 - Desabasto de materiales.
-- Incremento de costos de almacenamiento.
 - Interrupciones en la producción.
+- Planeación ineficiente de compras.
 
-Mediante Machine Learning se busca generar predicciones que apoyen la toma de decisiones relacionadas con compras y abastecimiento.
-
----
-
-## Objetivo General
-
-Desarrollar un modelo de Machine Learning que permita predecir los niveles finales de inventario utilizando datos históricos de movimientos de almacén, contribuyendo a una administración más eficiente de los recursos disponibles.
+El uso de técnicas de Machine Learning permite analizar datos históricos y generar predicciones que apoyen la toma de decisiones empresariales.
 
 ---
 
-## Tipo de Aprendizaje
+# Objetivo General
 
-**Aprendizaje Supervisado**
-
-Se seleccionó este enfoque porque se cuenta con datos históricos donde las variables de entrada están asociadas con una variable objetivo conocida.
+Desarrollar un modelo de Machine Learning capaz de predecir el inventario final de productos mediante el análisis de variables históricas relacionadas con movimientos de almacén.
 
 ---
 
-## Modelo Seleccionado
+# Tipo de Aprendizaje Utilizado
 
-### Regresión Lineal Múltiple
+## Aprendizaje Supervisado
 
-La regresión lineal múltiple fue seleccionada debido a que:
+Se seleccionó este enfoque porque se dispone de una variable objetivo conocida (**existencia_final**) y de un conjunto de variables predictoras que permiten estimarla.
+
+El modelo aprende a partir de ejemplos históricos donde se conoce tanto la entrada como el resultado esperado.
+
+---
+
+# Modelo Seleccionado
+
+## Regresión Lineal Múltiple
+
+La Regresión Lineal Múltiple fue seleccionada debido a que:
 
 - La variable objetivo es numérica.
-- Existe una relación lineal entre las variables.
-- Permite interpretar fácilmente los resultados.
-- Es adecuada para problemas de predicción de inventarios.
+- Existe una relación directa entre las variables del inventario.
+- Es un modelo sencillo de interpretar.
+- Presenta un excelente desempeño en problemas de predicción continua.
+- Permite evaluar fácilmente la influencia de las variables independientes sobre la variable objetivo.
 
 ---
 
-## Conjunto de Datos
+# Dataset Utilizado
 
-El conjunto de datos utilizado fue generado con fines académicos y simula registros de movimientos de inventario de una empresa manufacturera.
+Se trabajó con un conjunto de datos sintético generado para fines académicos.
 
-### Variables utilizadas
-
-#### Variables predictoras (X)
+## Variables Predictoras (X)
 
 - existencia_inicial
 - cantidad_recibida
 - cantidad_utilizada
 - costo_unitario
 
-#### Variable objetivo (Y)
+## Variable Objetivo (Y)
 
 - existencia_final
 
 ---
 
-## Preprocesamiento de Datos
+# Tecnologías Utilizadas
 
-Antes del entrenamiento del modelo se realizaron las siguientes actividades:
-
-- Validación de registros.
-- Conversión de datos a formato numérico.
-- Separación de variables predictoras y variable objetivo.
-- División del conjunto de datos para entrenamiento y prueba.
-
-Distribución utilizada:
-
-- 80% Entrenamiento
-- 20% Prueba
-
----
-
-## Tecnologías Utilizadas
+## Lenguaje de Programación
 
 - Node.js
 - JavaScript
-- Git
-- GitHub
-- csv-parser
-- ml-regression-multivariate-linear
+
+## Librerías Utilizadas
+
+### csv-parser
+
+Permite leer y procesar archivos CSV.
+
+### ml-regression-multivariate-linear
+
+Implementa el algoritmo de Regresión Lineal Múltiple.
+
+### chart.js
+
+Biblioteca para la generación de visualizaciones.
+
+### chartjs-node-canvas
+
+Permite generar gráficos Chart.js directamente desde Node.js.
 
 ---
 
-## Estructura del Proyecto
+# Estructura del Proyecto
 
 ```text
 machine-learning-inventario
 │
-├── inventario_maquiladora_ml_realista.csv
+├── inventario_maquiladora.csv
 ├── train.js
 ├── package.json
 ├── package-lock.json
+├── README.md
 ├── .gitignore
-└── README.md
+│
+└── resultados
+    │
+    ├── 01_real_vs_prediccion.png
+    ├── 02_inventario.png
+    └── 03_existencia_vs_final.png
 ```
 
 ---
 
-## Instalación
+# Preprocesamiento de Datos
 
-Clonar el repositorio:
+Antes del entrenamiento se realizaron las siguientes actividades:
 
-```bash
-git clone https://github.com/TU-USUARIO/machine-learning-inventario.git
+## Conversión de Datos
+
+Las variables fueron transformadas a formato numérico utilizando la función:
+
+```javascript
+Number()
 ```
 
-Entrar al proyecto:
+## Selección de Características
 
-```bash
-cd machine-learning-inventario
+Se eligieron únicamente las variables relevantes para el problema:
+
+```text
+existencia_inicial
+cantidad_recibida
+cantidad_utilizada
+costo_unitario
 ```
 
-Instalar dependencias:
+## Definición de Variable Objetivo
 
-```bash
-npm install
+```text
+existencia_final
+```
+
+## División del Conjunto de Datos
+
+Los registros fueron separados en:
+
+- 80% Entrenamiento
+- 20% Prueba
+
+Resultados:
+
+```text
+Datos de entrenamiento: 2336
+Datos de prueba: 584
 ```
 
 ---
 
-## Ejecución
+# Entrenamiento del Modelo
 
-Ejecutar el entrenamiento del modelo:
+El modelo fue entrenado utilizando los registros pertenecientes al conjunto de entrenamiento.
 
-```bash
-node train.js
+Posteriormente se utilizaron los registros del conjunto de prueba para verificar la capacidad de predicción del sistema.
+
+Código principal utilizado:
+
+```javascript
+const modelo = new MLR(
+  Xtrain,
+  Ytrain
+);
 ```
 
 ---
 
-## Resultados Obtenidos
+# Métricas de Evaluación
 
-Durante la ejecución se obtuvieron los siguientes resultados:
+Para evaluar el desempeño del modelo se utilizaron dos métricas ampliamente utilizadas en Machine Learning.
+
+## MAE (Mean Absolute Error)
+
+Mide el error promedio absoluto existente entre los valores reales y las predicciones realizadas por el modelo.
+
+Un valor cercano a cero indica una mayor precisión.
+
+## R² (Coeficiente de Determinación)
+
+Mide la capacidad del modelo para explicar la variabilidad de los datos.
+
+Su valor oscila entre:
+
+```text
+0 = Sin capacidad explicativa
+1 = Capacidad explicativa perfecta
+```
+
+---
+
+# Resultados Obtenidos
+
+La ejecución del modelo produjo los siguientes resultados:
 
 ```text
 Registros Totales: 2920
@@ -159,59 +220,169 @@ Valor Real: 6140
 Predicción: 6140.00
 ```
 
-### Interpretación
+## Interpretación
 
-#### MAE (Mean Absolute Error)
+### MAE = 0.0000
 
-El valor obtenido fue:
+El error promedio es prácticamente nulo.
+
+### R² = 1.0000
+
+El modelo logra explicar el 100% de la variación observada en los datos utilizados.
+
+### Predicción
+
+El valor predicho coincide exactamente con el valor real registrado, demostrando la capacidad predictiva del modelo.
+
+---
+
+# Visualización de Resultados
+
+El programa genera automáticamente tres gráficas en formato PNG.
+
+---
+
+## Gráfica 1
+### 01_real_vs_prediccion.png
+
+**Objetivo:**
+
+Comparar visualmente los valores reales del inventario contra las predicciones generadas por el modelo.
+
+**Interpretación:**
+
+Si ambas líneas permanecen superpuestas o muy cercanas, significa que el modelo está realizando predicciones precisas.
+
+**Importancia:**
+
+Esta es la gráfica más relevante para validar el desempeño del modelo.
+
+---
+
+## Gráfica 2
+### 02_inventario.png
+
+**Objetivo:**
+
+Mostrar la evolución histórica del inventario final.
+
+**Interpretación:**
+
+Permite identificar tendencias, incrementos y disminuciones en los niveles de inventario.
+
+**Importancia:**
+
+Facilita comprender el comportamiento operativo del almacén a través del tiempo.
+
+---
+
+## Gráfica 3
+### 03_existencia_vs_final.png
+
+**Objetivo:**
+
+Representar la relación entre la existencia inicial y la existencia final.
+
+**Interpretación:**
+
+Cada punto representa un registro del conjunto de datos.
+
+Mientras más alineados se encuentren los puntos, mayor será la relación entre ambas variables.
+
+**Importancia:**
+
+Permite visualizar la correlación existente entre las variables utilizadas por el modelo.
+
+---
+
+# Optimización del Modelo
+
+Tras evaluar los resultados obtenidos se determinó que el modelo alcanzó un desempeño óptimo:
 
 ```text
 MAE = 0.0000
-```
-
-Esto indica que el error promedio de las predicciones es prácticamente nulo.
-
-#### R² (Coeficiente de Determinación)
-
-El valor obtenido fue:
-
-```text
 R² = 1.0000
 ```
 
-Lo anterior significa que el modelo explica el 100% de la variabilidad observada en los datos utilizados.
+Debido a este nivel de precisión no fue necesario aplicar técnicas adicionales de optimización tales como:
+
+- Grid Search
+- Random Search
+- Ajuste de hiperparámetros
+- Selección adicional de características
+
+Sin embargo, como trabajo futuro podrían evaluarse modelos de mayor complejidad:
+
+- Árboles de Decisión
+- Random Forest
+- Redes Neuronales Artificiales
+- Gradient Boosting
 
 ---
 
-## Optimización del Modelo
+# Instalación
 
-Después de evaluar el modelo se observó un desempeño óptimo, por lo que no fue necesario realizar ajustes adicionales de hiperparámetros ni utilizar algoritmos más complejos.
+Instalar dependencias:
 
-Como trabajo futuro se podrían evaluar alternativas como:
+```bash
+npm install
+```
 
-- Árboles de Decisión.
-- Random Forest.
-- Redes Neuronales Artificiales.
-- Gradient Boosting.
+O individualmente:
 
----
-
-## Conclusiones
-
-La implementación realizada demuestra cómo el Machine Learning puede utilizarse para apoyar procesos de gestión de inventarios mediante el análisis de datos históricos.
-
-El modelo de Regresión Lineal Múltiple permitió predecir con precisión la existencia final de inventario, validando la utilidad de las técnicas de aprendizaje supervisado para problemas relacionados con logística, planeación y control de recursos.
+```bash
+npm install csv-parser
+npm install ml-regression-multivariate-linear
+npm install chart.js
+npm install chartjs-node-canvas
+```
 
 ---
 
-## Autor
+# Ejecución
+
+Ejecutar:
+
+```bash
+node train.js
+```
+
+---
+
+# Archivos Generados
+
+Tras la ejecución del programa se generan automáticamente:
+
+```text
+./resultados/01_real_vs_prediccion.png
+
+./resultados/02_inventario.png
+
+./resultados/03_existencia_vs_final.png
+```
+
+---
+
+# Conclusiones
+
+La implementación de un modelo de Regresión Lineal Múltiple permitió predecir correctamente el inventario final utilizando variables históricas relacionadas con los movimientos de almacén.
+
+La solución desarrollada demuestra cómo las técnicas de Machine Learning pueden apoyar procesos empresariales relacionados con planificación de compras, control de inventarios y optimización de recursos.
+
+Los resultados obtenidos evidencian la capacidad de los modelos supervisados para identificar patrones y generar predicciones de alta precisión cuando los datos poseen relaciones claramente definidas.
+
+---
+
+# Autor
 
 **Alejandro Calzada Rodríguez**
 
-Maestría en Sistemas Computacionales  
+Maestría en Sistemas Computacionales
+
 Instituto Universitario Veracruzano (IUV)
 
 Materia:
 **Inteligencia Artificial y Machine Learning**
 
-2026
+Año:
+**2026**

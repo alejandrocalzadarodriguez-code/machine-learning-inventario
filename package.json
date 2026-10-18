@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chart.js": "^4.5.1",
+    "chartjs-node-canvas": "^5.0.0",
     "csv-parser": "^3.2.1",
     "ml-regression-multivariate-linear": "^2.0.4"
   }
