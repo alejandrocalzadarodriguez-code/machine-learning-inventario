@@ -1,40 +1,30 @@
 /*
 ========================================================
 PROYECTO:
-Predicción de Inventarios con Machine Learning
+Predicción de Demanda de Insumos para Empacadora de Limón
 
 AUTOR:
 Alejandro Calzada Rodríguez
 
-MATERIA:
-Inteligencia Artificial y Machine Learning
-
 DESCRIPCIÓN:
-Este programa:
 
-1. Lee un archivo CSV.
+1. Lee el dataset CSV.
 2. Preprocesa los datos.
-3. Entrena un modelo de Regresión Lineal Múltiple.
-4. Evalúa el desempeño mediante MAE y R².
-5. Genera automáticamente gráficas en formato PNG.
+3. Entrena un modelo de regresión lineal.
+4. Genera predicciones.
+5. Calcula:
+   - MAE
+   - MSE
+   - RMSE
+   - R²
+6. Genera gráficas PNG.
 
 ========================================================
 */
 
-// =====================================================
-// IMPORTACIÓN DE LIBRERÍAS
-// =====================================================
-
-// Librería para manejo de archivos
 const fs = require("fs");
-
-// Librería para leer CSV
 const csv = require("csv-parser");
-
-// Modelo de Machine Learning
 const MLR = require("ml-regression-multivariate-linear");
-
-// Librerías para generar gráficas
 const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 
 // =====================================================
@@ -51,7 +41,7 @@ const chartJSNodeCanvas = new ChartJSNodeCanvas({
 });
 
 // =====================================================
-// CREACIÓN DE CARPETA RESULTADOS
+// CARPETA DE RESULTADOS
 // =====================================================
 
 if (!fs.existsSync("./resultados")) {
@@ -59,16 +49,16 @@ if (!fs.existsSync("./resultados")) {
 }
 
 // =====================================================
-// ARREGLO PARA ALMACENAR LOS DATOS
+// ALMACÉN DE DATOS
 // =====================================================
 
 const rows = [];
 
 // =====================================================
-// LECTURA DEL ARCHIVO CSV
+// LEER CSV
 // =====================================================
 
-fs.createReadStream("./inventario_maquiladora.csv")
+fs.createReadStream("./inventario_limon_2024.csv")
   .pipe(csv())
 
   .on("data", (row) => {
@@ -82,34 +72,54 @@ fs.createReadStream("./inventario_maquiladora.csv")
     console.log("=================================");
     console.log("Registros encontrados:", rows.length);
 
-    // =================================================
-    // PREPROCESAMIENTO
-    // =================================================
-
     const X = [];
     const Y = [];
 
     rows.forEach((row) => {
 
-      // Variables de entrada
+      // Codificación de variables categóricas
+
+      const temporada =
+        row.temporada === "Alta"
+          ? 3
+          : row.temporada === "Media"
+          ? 2
+          : 1;
+
+      const mercado =
+        row.mercado === "Europa"
+          ? 4
+          : row.mercado === "USA"
+          ? 3
+          : row.mercado === "Canada"
+          ? 2
+          : 1;
+
+      // Variables predictoras
+
       X.push([
-        Number(row.existencia_inicial),
-        Number(row.cantidad_recibida),
-        Number(row.cantidad_utilizada),
-        Number(row.costo_unitario),
+        Number(row.inventario_actual),
+        Number(row.consumo_semanal),
+        Number(row.pedidos_pendientes),
+        Number(row.dias_entrega),
+        Number(row.precio_unitario),
+        temporada,
+        mercado,
+        Number(row.temperatura_promedio)
       ]);
 
       // Variable objetivo
+
       Y.push([
-        Number(row.existencia_final),
+        Number(row.demanda_proxima_semana)
       ]);
     });
 
     // =================================================
-    // DIVISIÓN DE DATOS
+    // DIVISIÓN TRAIN / TEST
     // =================================================
 
-    const split = Math.floor(X.length * 0.8);
+    const split = Math.floor(X.length * 0.80);
 
     const Xtrain = X.slice(0, split);
     const Ytrain = Y.slice(0, split);
@@ -121,38 +131,66 @@ fs.createReadStream("./inventario_maquiladora.csv")
     console.log("Prueba:", Xtest.length);
 
     // =================================================
-    // ENTRENAMIENTO DEL MODELO
+    // ENTRENAMIENTO
     // =================================================
 
-    const modelo = new MLR(
-      Xtrain,
-      Ytrain
-    );
+    const modelo =
+      new MLR(Xtrain, Ytrain);
 
     // =================================================
-    // PREDICCIONES
+    // PREDICCIÓN
     // =================================================
 
-    const predicciones = Xtest.map(
-      fila => modelo.predict(fila)[0]
-    );
+    const predicciones =
+      Xtest.map(
+        fila => modelo.predict(fila)[0]
+      );
 
     // =================================================
     // MAE
     // =================================================
 
-    let sumaError = 0;
+    let sumaMAE = 0;
 
     for (let i = 0; i < predicciones.length; i++) {
 
-      sumaError += Math.abs(
+      sumaMAE += Math.abs(
         Ytest[i][0] -
         predicciones[i]
       );
+
     }
 
     const mae =
-      sumaError / predicciones.length;
+      sumaMAE /
+      predicciones.length;
+
+    // =================================================
+    // MSE
+    // =================================================
+
+    let sumaMSE = 0;
+
+    for (let i = 0; i < predicciones.length; i++) {
+
+      sumaMSE += Math.pow(
+        Ytest[i][0] -
+        predicciones[i],
+        2
+      );
+
+    }
+
+    const mse =
+      sumaMSE /
+      predicciones.length;
+
+    // =================================================
+    // RMSE
+    // =================================================
+
+    const rmse =
+      Math.sqrt(mse);
 
     // =================================================
     // R²
@@ -183,7 +221,8 @@ fs.createReadStream("./inventario_maquiladora.csv")
     }
 
     const r2 =
-      1 - (ssRes / ssTot);
+      1 -
+      (ssRes / ssTot);
 
     // =================================================
     // RESULTADOS
@@ -193,25 +232,23 @@ fs.createReadStream("./inventario_maquiladora.csv")
     console.log("=================================");
     console.log("RESULTADO DEL MODELO");
     console.log("=================================");
-    console.log("Registros Totales:", rows.length);
-    console.log("Datos Entrenamiento:", Xtrain.length);
-    console.log("Datos Prueba:", Xtest.length);
-    console.log("MAE:", mae.toFixed(4));
-    console.log("R²:", r2.toFixed(4));
-    console.log("=================================");
+    console.log("Total registros:", rows.length);
+    console.log("Entrenamiento:", Xtrain.length);
+    console.log("Prueba:", Xtest.length);
     console.log("");
-    console.log("Ejemplo");
-    console.log("Real:", Ytest[0][0]);
-    console.log("Predicción:", predicciones[0].toFixed(2));
+    console.log("MAE :", mae.toFixed(4));
+    console.log("MSE :", mse.toFixed(4));
+    console.log("RMSE:", rmse.toFixed(4));
+    console.log("R²  :", r2.toFixed(4));
+    console.log("=================================");
 
     // =================================================
     // GRÁFICA 1
-    // VALORES REALES VS PREDICCIONES
+    // REAL VS PREDICCIÓN
     // =================================================
 
     const grafica1 = {
       type: "line",
-
       data: {
         labels: Array.from(
           { length: 100 },
@@ -219,54 +256,28 @@ fs.createReadStream("./inventario_maquiladora.csv")
         ),
 
         datasets: [
-
           {
-            label: "Valor Real",
-
+            label: "Real",
             data: Ytest
               .slice(0, 100)
               .map(x => x[0]),
-
             borderColor: "blue",
-            borderWidth: 3
+            borderWidth: 2
           },
 
           {
             label: "Predicción",
-
             data: predicciones
               .slice(0, 100),
-
             borderColor: "red",
-            borderWidth: 3
+            borderWidth: 2
           }
-
         ]
-      },
-
-      options: {
-
-        plugins: {
-
-          title: {
-
-            display: true,
-
-            text:
-              "Comparación entre Valores Reales y Predicciones"
-
-          }
-
-        }
-
       }
-
     };
 
     const imagen1 =
-      await chartJSNodeCanvas.renderToBuffer(
-        grafica1
-      );
+      await chartJSNodeCanvas.renderToBuffer(grafica1);
 
     fs.writeFileSync(
       "./resultados/01_real_vs_prediccion.png",
@@ -275,80 +286,53 @@ fs.createReadStream("./inventario_maquiladora.csv")
 
     // =================================================
     // GRÁFICA 2
-    // COMPORTAMIENTO DEL INVENTARIO
+    // DEMANDA
     // =================================================
 
-    const inventario =
+    const demanda =
       rows
         .slice(0, 150)
         .map(
-          r => Number(r.existencia_final)
+          r => Number(r.demanda_proxima_semana)
         );
 
     const grafica2 = {
-
       type: "line",
 
       data: {
-
         labels:
-          inventario.map(
+          demanda.map(
             (_, i) => i + 1
           ),
 
         datasets: [
-
           {
-
             label:
-              "Existencia Final",
+              "Demanda Semanal",
 
             data:
-              inventario,
+              demanda,
 
             borderColor:
               "green",
 
-            borderWidth: 3
-
+            borderWidth: 2
           }
-
         ]
-
-      },
-
-      options: {
-
-        plugins: {
-
-          title: {
-
-            display: true,
-
-            text:
-              "Evolución Histórica del Inventario"
-
-          }
-
-        }
-
       }
-
     };
 
     const imagen2 =
-      await chartJSNodeCanvas.renderToBuffer(
-        grafica2
-      );
+      await chartJSNodeCanvas.renderToBuffer(grafica2);
 
     fs.writeFileSync(
-      "./resultados/02_inventario.png",
+      "./resultados/02_demanda.png",
       imagen2
     );
 
     // =================================================
     // GRÁFICA 3
-    // EXISTENCIA INICIAL VS FINAL
+    // CONSUMO VS DEMANDA
     // =================================================
 
     const grafica3 = {
@@ -356,97 +340,52 @@ fs.createReadStream("./inventario_maquiladora.csv")
       type: "scatter",
 
       data: {
-
         datasets: [
-
           {
-
             label:
-              "Existencia Inicial vs Existencia Final",
+              "Consumo vs Demanda",
 
             data:
               rows
                 .slice(0, 300)
                 .map(r => ({
-
                   x:
-                    Number(
-                      r.existencia_inicial
-                    ),
+                    Number(r.consumo_semanal),
 
                   y:
-                    Number(
-                      r.existencia_final
-                    )
-
+                    Number(r.demanda_proxima_semana)
                 })),
 
             backgroundColor:
               "orange",
 
             pointRadius: 4
-
           }
-
         ]
-
-      },
-
-      options: {
-
-        plugins: {
-
-          title: {
-
-            display: true,
-
-            text:
-              "Relación Entre Inventario Inicial e Inventario Final"
-
-          }
-
-        }
-
       }
-
     };
 
     const imagen3 =
-      await chartJSNodeCanvas.renderToBuffer(
-        grafica3
-      );
+      await chartJSNodeCanvas.renderToBuffer(grafica3);
 
     fs.writeFileSync(
-      "./resultados/03_existencia_vs_final.png",
+      "./resultados/03_consumo_vs_demanda.png",
       imagen3
     );
-
-    // =================================================
-    // CONFIRMACIÓN
-    // =================================================
 
     console.log("");
     console.log("=================================");
     console.log("GRÁFICAS GENERADAS");
     console.log("=================================");
-    console.log(
-      "./resultados/01_real_vs_prediccion.png"
-    );
-    console.log(
-      "./resultados/02_inventario.png"
-    );
-    console.log(
-      "./resultados/03_existencia_vs_final.png"
-    );
+    console.log("./resultados/01_real_vs_prediccion.png");
+    console.log("./resultados/02_demanda.png");
+    console.log("./resultados/03_consumo_vs_demanda.png");
     console.log("=================================");
-
   })
 
   .on("error", (error) => {
 
-    console.error(
-      "Error al leer el archivo CSV"
-    );
+    console.error("Error leyendo CSV");
 
     console.error(error);
 

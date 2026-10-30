@@ -17,3 +17,7 @@ temp/
 
 # Cache
 .cache/
+
+
+# Datos empresariales
+inventario_limon_2024.csv
