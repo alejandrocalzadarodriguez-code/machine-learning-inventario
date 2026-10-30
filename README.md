@@ -1,388 +1,248 @@
-# Predicción de Inventario con Machine Learning
+Predicción de Demanda de Insumos mediante Machine Learning
+Descripción General
 
-## Descripción General
+Este proyecto fue desarrollado como parte de la asignatura Inteligencia Artificial y Machine Learning de la Maestría en Sistemas Computacionales.
 
-Este proyecto fue desarrollado como parte de la asignatura **Inteligencia Artificial y Machine Learning** de la Maestría en Sistemas Computacionales.
+El objetivo consiste en desarrollar un modelo de Machine Learning capaz de predecir la demanda semanal de insumos utilizados en una empacadora de limón, con la finalidad de mejorar la gestión de inventarios y apoyar la toma de decisiones relacionadas con compras, abastecimiento y control de existencias.
 
-El objetivo principal consiste en implementar un modelo de Machine Learning capaz de predecir los niveles finales de inventario utilizando datos históricos de movimientos de almacén, permitiendo apoyar la toma de decisiones relacionadas con compras, abastecimiento y control de existencias.
+La solución fue implementada utilizando Node.js y un modelo de Regresión Lineal Múltiple, complementado con la generación automática de métricas de desempeño y gráficas estadísticas para facilitar el análisis de resultados.
 
-La solución fue desarrollada utilizando **Node.js** y un modelo de **Regresión Lineal Múltiple**, complementado con la generación automática de gráficas para analizar visualmente el comportamiento de los datos y validar el desempeño del modelo.
+Problema Planteado
 
----
+La empresa requiere mejorar la administración de los insumos utilizados en sus procesos de maquila para reducir riesgos asociados con:
 
-# Problema Planteado
+Desabasto de materiales.
+Compras urgentes no planificadas.
+Exceso de inventario.
+Incremento en costos de almacenamiento.
+Planeación ineficiente de abastecimiento.
 
-La empresa Maquiladora San José requiere mejorar la gestión de sus inventarios para minimizar problemas asociados con:
+Para atender esta problemática se desarrolló un modelo predictivo capaz de estimar la demanda futura de insumos utilizando información histórica de operación.
 
-- Exceso de existencias.
-- Costos elevados de almacenamiento.
-- Desabasto de materiales.
-- Interrupciones en la producción.
-- Planeación ineficiente de compras.
+Objetivo General
 
-El uso de técnicas de Machine Learning permite analizar datos históricos y generar predicciones que apoyen la toma de decisiones empresariales.
+Desarrollar un modelo de Machine Learning que permita predecir la demanda semanal de insumos a partir del análisis de variables históricas relacionadas con inventarios, consumo, pedidos pendientes y condiciones de operación.
 
----
+Tipo de Aprendizaje Utilizado
+Aprendizaje Supervisado
 
-# Objetivo General
+Se seleccionó este enfoque debido a que se dispone de una variable objetivo conocida (demanda_proxima_semana) y un conjunto de variables predictoras que permiten estimarla.
 
-Desarrollar un modelo de Machine Learning capaz de predecir el inventario final de productos mediante el análisis de variables históricas relacionadas con movimientos de almacén.
+El modelo aprende a partir de ejemplos históricos donde se conoce tanto la información de entrada como los resultados observados.
 
----
+Modelo Seleccionado
+Regresión Lineal Múltiple
 
-# Tipo de Aprendizaje Utilizado
+La Regresión Lineal Múltiple fue seleccionada porque:
 
-## Aprendizaje Supervisado
+La variable objetivo es numérica.
+Permite modelar relaciones entre múltiples variables.
+Es fácil de interpretar.
+Presenta buen desempeño en problemas de predicción continua.
+Facilita el análisis de la influencia de las variables independientes.
+Fuente de Datos
 
-Se seleccionó este enfoque porque se dispone de una variable objetivo conocida (**existencia_final**) y de un conjunto de variables predictoras que permiten estimarla.
+Para esta actividad se utilizó una porción del histórico real de operaciones correspondiente al último año de actividad de la empresa.
 
-El modelo aprende a partir de ejemplos históricos donde se conoce tanto la entrada como el resultado esperado.
+Los datos empleados fueron autorizados exclusivamente para fines académicos y se utilizaron respetando las políticas de confidencialidad de la organización.
 
----
+Variables Utilizadas
+Variables Predictoras (X)
+inventario_actual
+consumo_semanal
+pedidos_pendientes
+dias_entrega
+precio_unitario
+temporada
+mercado
+temperatura_promedio
+Variable Objetivo (Y)
+demanda_proxima_semana
+Stack Tecnológico
+Lenguaje de Programación
+Node.js
+JavaScript
+Librerías Utilizadas
+csv-parser
 
-# Modelo Seleccionado
+Lectura y procesamiento de archivos CSV.
 
-## Regresión Lineal Múltiple
+ml-regression-multivariate-linear
 
-La Regresión Lineal Múltiple fue seleccionada debido a que:
+Implementación del algoritmo de Regresión Lineal Múltiple.
 
-- La variable objetivo es numérica.
-- Existe una relación directa entre las variables del inventario.
-- Es un modelo sencillo de interpretar.
-- Presenta un excelente desempeño en problemas de predicción continua.
-- Permite evaluar fácilmente la influencia de las variables independientes sobre la variable objetivo.
+chart.js
 
----
+Generación de gráficas estadísticas.
 
-# Dataset Utilizado
+chartjs-node-canvas
 
-Se trabajó con un conjunto de datos sintético generado para fines académicos.
+Renderizado de gráficas directamente desde Node.js.
 
-## Variables Predictoras (X)
+fs
 
-- existencia_inicial
-- cantidad_recibida
-- cantidad_utilizada
-- costo_unitario
+Manejo de archivos y directorios.
 
-## Variable Objetivo (Y)
-
-- existencia_final
-
----
-
-# Tecnologías Utilizadas
-
-## Lenguaje de Programación
-
-- Node.js
-- JavaScript
-
-## Librerías Utilizadas
-
-### csv-parser
-
-Permite leer y procesar archivos CSV.
-
-### ml-regression-multivariate-linear
-
-Implementa el algoritmo de Regresión Lineal Múltiple.
-
-### chart.js
-
-Biblioteca para la generación de visualizaciones.
-
-### chartjs-node-canvas
-
-Permite generar gráficos Chart.js directamente desde Node.js.
-
----
-
-# Estructura del Proyecto
-
-```text
+Estructura del Proyecto
+Plain Text
 machine-learning-inventario
 │
-├── inventario_maquiladora.csv
-├── train.js
+├── evaluacion_modelo.js
 ├── package.json
 ├── package-lock.json
 ├── README.md
 ├── .gitignore
 │
 └── resultados
-    │
-    ├── 01_real_vs_prediccion.png
-    ├── 02_inventario.png
-    └── 03_existencia_vs_final.png
-```
-
----
-
-# Preprocesamiento de Datos
+│
+├── 01_real_vs_prediccion.png
+├── 02_demanda.png
+└── 03_consumo_vs_demanda.png
+Preprocesamiento de Datos
 
 Antes del entrenamiento se realizaron las siguientes actividades:
 
-## Conversión de Datos
+Conversión de Variables
 
-Las variables fueron transformadas a formato numérico utilizando la función:
+Conversión de todos los valores numéricos mediante:
 
-```javascript
+JavaScript
 Number()
-```
+ 
+Codificación de Variables Categóricas
 
-## Selección de Características
+Variables como temporada y mercado fueron transformadas a valores numéricos para permitir su utilización dentro del modelo.
 
-Se eligieron únicamente las variables relevantes para el problema:
+Selección de Características
 
-```text
-existencia_inicial
-cantidad_recibida
-cantidad_utilizada
-costo_unitario
-```
+Se seleccionaron únicamente las variables relevantes para el problema de predicción de demanda.
 
-## Definición de Variable Objetivo
+División del Dataset
 
-```text
-existencia_final
-```
+Los registros fueron divididos en:
 
-## División del Conjunto de Datos
-
-Los registros fueron separados en:
-
-- 80% Entrenamiento
-- 20% Prueba
+Plain Text
+80% Entrenamiento
+20% Prueba
 
 Resultados:
 
-```text
-Datos de entrenamiento: 2336
-Datos de prueba: 584
-```
+Plain Text
+Total de registros: 5000
+Entrenamiento: 4000
+Prueba: 1000
+ 
+Entrenamiento del Modelo
 
----
+El modelo fue entrenado utilizando el conjunto de entrenamiento y posteriormente evaluado utilizando el conjunto de prueba.
 
-# Entrenamiento del Modelo
+Implementación principal:
 
-El modelo fue entrenado utilizando los registros pertenecientes al conjunto de entrenamiento.
-
-Posteriormente se utilizaron los registros del conjunto de prueba para verificar la capacidad de predicción del sistema.
-
-Código principal utilizado:
-
-```javascript
+JavaScript
 const modelo = new MLR(
-  Xtrain,
-  Ytrain
+Xtrain,
+Ytrain
 );
-```
+Métricas de Evaluación
 
----
+Para evaluar el desempeño del modelo se utilizaron las siguientes métricas:
 
-# Métricas de Evaluación
+MAE (Mean Absolute Error)
 
-Para evaluar el desempeño del modelo se utilizaron dos métricas ampliamente utilizadas en Machine Learning.
+Mide el error promedio absoluto entre los valores reales y las predicciones.
 
-## MAE (Mean Absolute Error)
+MSE (Mean Squared Error)
 
-Mide el error promedio absoluto existente entre los valores reales y las predicciones realizadas por el modelo.
+Mide el promedio del cuadrado de los errores.
 
-Un valor cercano a cero indica una mayor precisión.
+RMSE (Root Mean Squared Error)
 
-## R² (Coeficiente de Determinación)
+Expresa el error promedio utilizando las mismas unidades de la variable objetivo.
 
-Mide la capacidad del modelo para explicar la variabilidad de los datos.
+R² (Coeficiente de Determinación)
 
-Su valor oscila entre:
+Mide la capacidad del modelo para explicar la variabilidad de los datos observados.
 
-```text
-0 = Sin capacidad explicativa
-1 = Capacidad explicativa perfecta
-```
-
----
-
-# Resultados Obtenidos
+Resultados Obtenidos
 
 La ejecución del modelo produjo los siguientes resultados:
 
-```text
-Registros Totales: 2920
-Datos Entrenamiento: 2336
-Datos Prueba: 584
+Plain Text
+Total registros: 5000
+ 
+Entrenamiento: 4000
+ 
+Prueba: 1000
+ 
+MAE : 83.5934
+ 
+MSE : 10322.4402
+ 
+RMSE: 101.5994
+ 
+R² : 0.8634
+Interpretación de Resultados
+MAE = 83.5934
 
-MAE: 0.0000
-R²: 1.0000
+El modelo presenta un error promedio de aproximadamente 84 unidades por predicción.
 
-Valor Real: 6140
-Predicción: 6140.00
-```
+MSE = 10322.4402
 
-## Interpretación
+Existen algunos errores de mayor magnitud, aunque se mantienen dentro de rangos aceptables.
 
-### MAE = 0.0000
+RMSE = 101.5994
 
-El error promedio es prácticamente nulo.
+El error típico de predicción es de aproximadamente 102 unidades.
 
-### R² = 1.0000
+R² = 0.8634
 
-El modelo logra explicar el 100% de la variación observada en los datos utilizados.
+El modelo explica aproximadamente el 86.34% de la variabilidad observada en la demanda semanal de insumos.
 
-### Predicción
+Archivos Generados
 
-El valor predicho coincide exactamente con el valor real registrado, demostrando la capacidad predictiva del modelo.
+Durante la ejecución se generan automáticamente las siguientes visualizaciones:
 
----
-
-# Visualización de Resultados
-
-El programa genera automáticamente tres gráficas en formato PNG.
-
----
-
-## Gráfica 1
-### 01_real_vs_prediccion.png
-
-**Objetivo:**
-
-Comparar visualmente los valores reales del inventario contra las predicciones generadas por el modelo.
-
-**Interpretación:**
-
-Si ambas líneas permanecen superpuestas o muy cercanas, significa que el modelo está realizando predicciones precisas.
-
-**Importancia:**
-
-Esta es la gráfica más relevante para validar el desempeño del modelo.
-
----
-
-## Gráfica 2
-### 02_inventario.png
-
-**Objetivo:**
-
-Mostrar la evolución histórica del inventario final.
-
-**Interpretación:**
-
-Permite identificar tendencias, incrementos y disminuciones en los niveles de inventario.
-
-**Importancia:**
-
-Facilita comprender el comportamiento operativo del almacén a través del tiempo.
-
----
-
-## Gráfica 3
-### 03_existencia_vs_final.png
-
-**Objetivo:**
-
-Representar la relación entre la existencia inicial y la existencia final.
-
-**Interpretación:**
-
-Cada punto representa un registro del conjunto de datos.
-
-Mientras más alineados se encuentren los puntos, mayor será la relación entre ambas variables.
-
-**Importancia:**
-
-Permite visualizar la correlación existente entre las variables utilizadas por el modelo.
-
----
-
-# Optimización del Modelo
-
-Tras evaluar los resultados obtenidos se determinó que el modelo alcanzó un desempeño óptimo:
-
-```text
-MAE = 0.0000
-R² = 1.0000
-```
-
-Debido a este nivel de precisión no fue necesario aplicar técnicas adicionales de optimización tales como:
-
-- Grid Search
-- Random Search
-- Ajuste de hiperparámetros
-- Selección adicional de características
-
-Sin embargo, como trabajo futuro podrían evaluarse modelos de mayor complejidad:
-
-- Árboles de Decisión
-- Random Forest
-- Redes Neuronales Artificiales
-- Gradient Boosting
-
----
-
-# Instalación
+Plain Text
+./resultados/01_real_vs_prediccion.png
+ 
+./resultados/02_demanda.png
+ 
+./resultados/03_consumo_vs_demanda.png
+Ejecución
 
 Instalar dependencias:
 
-```bash
+Shell
 npm install
-```
-
-O individualmente:
-
-```bash
-npm install csv-parser
-npm install ml-regression-multivariate-linear
-npm install chart.js
-npm install chartjs-node-canvas
-```
-
----
-
-# Ejecución
 
 Ejecutar:
 
-```bash
-node train.js
-```
+Shell
+node evaluacion_modelo.js
+Propuestas de Mejora
 
----
+Como líneas futuras de trabajo podrían evaluarse:
 
-# Archivos Generados
+Random Forest.
+XGBoost.
+Gradient Boosting.
+Redes Neuronales Artificiales.
+Incorporación de variables climáticas.
+Inclusión de históricos de producción más amplios.
+Conclusiones
 
-Tras la ejecución del programa se generan automáticamente:
+Los resultados obtenidos demuestran que el modelo posee una capacidad predictiva adecuada para apoyar la gestión de inventarios de una empacadora de limón. El valor obtenido de R² (0.8634) indica que más del 86% de la variabilidad observada en la demanda semanal es explicada por las variables analizadas.
 
-```text
-./resultados/01_real_vs_prediccion.png
+La utilización de información histórica real permitió validar el comportamiento del modelo bajo condiciones operativas auténticas, obteniendo resultados útiles para futuras aplicaciones de inteligencia artificial orientadas a la optimización de inventarios y procesos de abastecimiento.
 
-./resultados/02_inventario.png
+Autor
 
-./resultados/03_existencia_vs_final.png
-```
-
----
-
-# Conclusiones
-
-La implementación de un modelo de Regresión Lineal Múltiple permitió predecir correctamente el inventario final utilizando variables históricas relacionadas con los movimientos de almacén.
-
-La solución desarrollada demuestra cómo las técnicas de Machine Learning pueden apoyar procesos empresariales relacionados con planificación de compras, control de inventarios y optimización de recursos.
-
-Los resultados obtenidos evidencian la capacidad de los modelos supervisados para identificar patrones y generar predicciones de alta precisión cuando los datos poseen relaciones claramente definidas.
-
----
-
-# Autor
-
-**Alejandro Calzada Rodríguez**
+Alejandro Calzada Rodríguez
 
 Maestría en Sistemas Computacionales
 
 Instituto Universitario Veracruzano (IUV)
 
-Materia:
-**Inteligencia Artificial y Machine Learning**
+Asignatura: Inteligencia Artificial y Machine Learning
 
-Año:
-**2026**
+2026
